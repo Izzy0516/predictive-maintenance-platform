@@ -2,13 +2,13 @@
 
 Predicting Remaining Useful Life (RUL) on jet engine sensor data with tree-based regression, engine-grouped cross-validation, and a FastAPI serving layer.
 
-**Best result: RMSE 17.9 on the held-out `test_FD001` set — inside the published FD001 benchmark range.**
+**Best result: RMSE 17.9 on the held-out `test_FD001` set inside the published FD001 benchmark range.**
 
 ---
 
 ## Why this project
 
-Remaining Useful Life prediction is the modelling task behind component life management in motorsport (gearbox change rules in F1, ERS component lifetimes, power unit life budgets) and industrial predictive maintenance. The problem shape — sensor time series → regression on a survival-adjacent target — is a compact demonstration of standard ML engineering: data cleaning, feature engineering, model selection, honest evaluation, serving, and testing.
+Remaining Useful Life prediction is the modelling task behind component life management in motorsport (gearbox change rules in F1, ERS component lifetimes, power unit life budgets) and industrial predictive maintenance. The problem shape — sensor time series → regression on a survival-adjacent target, is a compact demonstration of standard ML engineering: data cleaning, feature engineering, model selection, honest evaluation, serving, and testing.
 
 ---
 
