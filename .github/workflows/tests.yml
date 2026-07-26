@@ -35,9 +35,11 @@ jobs:
           mkdir -p data/raw
           curl -L -o cmapss.zip "https://phm-datasets.s3.amazonaws.com/NASA/6.+Turbofan+Engine+Degradation+Simulation+Data+Set.zip"
           unzip -o cmapss.zip
-          unzip -o "CMAPSSData.zip"
-          mv train_FD001.txt test_FD001.txt RUL_FD001.txt data/raw/ || true
-          ls data/raw/
+          find . -name "CMAPSSData.zip" -exec unzip -o {} \;
+          find . -name "train_FD001.txt" -exec mv {} data/raw/ \;
+          find . -name "test_FD001.txt" -exec mv {} data/raw/ \;
+          find . -name "RUL_FD001.txt" -exec mv {} data/raw/ \;
+          ls -la data/raw/
 
       - name: Train model
         run: python -m src.train
