@@ -30,7 +30,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Train model (needed for API tests)
+      - name: Download C-MAPSS dataset
+        run: |
+          mkdir -p data/raw
+          curl -L -o cmapss.zip "https://phm-datasets.s3.amazonaws.com/NASA/6.+Turbofan+Engine+Degradation+Simulation+Data+Set.zip"
+          unzip -o cmapss.zip
+          unzip -o "CMAPSSData.zip"
+          mv train_FD001.txt test_FD001.txt RUL_FD001.txt data/raw/ || true
+          ls data/raw/
+
+      - name: Train model
         run: python -m src.train
 
       - name: Run tests
