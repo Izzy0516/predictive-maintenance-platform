@@ -1,5 +1,7 @@
 # Predictive Maintenance Platform
 
+[![tests](https://github.com/Izzy0516/predictive-maintenance-platform/actions/workflows/tests.yml/badge.svg)](https://github.com/Izzy0516/predictive-maintenance-platform/actions/workflows/tests.yml)
+
 Predicting Remaining Useful Life (RUL) on jet engine sensor data with tree-based regression, engine-grouped cross-validation, and a FastAPI serving layer.
 
 **Best result: RMSE 17.9 on the held-out `test_FD001` set inside the published FD001 benchmark range.**
