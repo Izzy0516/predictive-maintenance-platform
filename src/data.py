@@ -82,3 +82,40 @@ def load_and_engineer(
     df = add_rul(df, cap=rul_cap)
     df = add_rolling_features(df, window=rolling_window)
     return df
+
+def load_test_and_rul(
+    test_path: str | Path = "data/raw/test_FD001.txt",
+    rul_path: str | Path = "data/raw/RUL_FD001.txt",
+    rul_cap: int = 125,
+    rolling_window: int = 5,
+) -> tuple[pd.DataFrame, pd.Series]:
+    """Load the held-out FD001 test set and its true RUL labels.
+
+    The test file contains sensor history for 100 engines, stopped some
+    number of cycles before failure. RUL_FD001.txt contains one number
+    per engine: the true RUL at the last recorded cycle. Only that last
+    cycle per engine is graded.
+
+    Returns:
+        - X_test: feature matrix for the last cycle of each engine (100 rows)
+        - y_test: true RUL for each engine, clipped at `rul_cap` for
+          consistency with the training-target convention
+    """
+    test_path = Path(test_path)
+    rul_path = Path(rul_path)
+    for p in (test_path, rul_path):
+        if not p.exists():
+            raise FileNotFoundError(f"Required file missing: {p}")
+
+    # Load and clean the test data with the same pipeline as train.
+    df = load_raw(test_path)
+    df = add_rolling_features(df, window=rolling_window)
+
+    # Keep only the last recorded cycle of each engine — that's what's graded.
+    last_cycles = df.groupby("engine_id").tail(1).reset_index(drop=True)
+
+    # True RUL labels (one per engine, in engine_id order).
+    true_rul = pd.read_csv(rul_path, header=None, names=["RUL"])["RUL"]
+    true_rul_clipped = true_rul.clip(upper=rul_cap)
+
+    return last_cycles, true_rul_clipped

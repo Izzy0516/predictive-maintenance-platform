@@ -71,3 +71,15 @@ def test_rolling_mean_of_first_cycle_equals_that_cycles_value(toy_df):
     for engine_id in [1, 2]:
         first = out[(out.engine_id == engine_id) & (out.cycle == 1)]
         assert first["s2_rolling_mean"].iloc[0] == first["s2"].iloc[0]
+
+def test_load_test_and_rul_shapes_match(tmp_path):
+    """Test file and RUL file should give matching-length outputs."""
+    # We can only run this if the raw files exist locally; skip otherwise.
+    from pathlib import Path
+    if not Path("data/raw/test_FD001.txt").exists():
+        pytest.skip("Test data not available")
+
+    from src.data import load_test_and_rul
+    X_test, y_test = load_test_and_rul()
+    assert len(X_test) == len(y_test) == 100
+    assert (X_test["engine_id"] == range(1, 101)).all()
