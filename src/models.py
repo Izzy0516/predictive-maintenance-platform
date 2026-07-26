@@ -78,3 +78,38 @@ def make_random_forest(n_estimators: int = 100, max_depth: int | None = None) ->
         random_state=42,
         n_jobs=-1,
     )
+
+
+from sklearn.ensemble import HistGradientBoostingRegressor
+
+
+def make_gradient_boosting(
+    max_iter: int = 500,
+    learning_rate: float = 0.05,
+    max_depth: int = 6,
+) -> HistGradientBoostingRegressor:
+    """Histogram-based gradient boosting for RUL prediction.
+
+    Sklearn's HistGradientBoostingRegressor uses the same core algorithm as
+    XGBoost and LightGBM (histogram-based split finding) with no external
+    dependencies. Gradient boosting fits trees sequentially, each targeting
+    the residual errors of the ensemble so far. This tends to reduce large
+    errors more effectively than a random forest's averaging — relevant
+    because the NASA score penalises tail errors exponentially.
+
+    Args:
+        max_iter: Number of boosting rounds (trees). More -> more capacity
+            and higher overfitting risk.
+        learning_rate: Shrinkage applied to each tree's contribution. Smaller
+            values need more trees but give smoother, better-generalising models.
+        max_depth: Cap on individual tree depth. 6 is a common starting point.
+
+    Returns:
+        A sklearn HistGradientBoostingRegressor.
+    """
+    return HistGradientBoostingRegressor(
+        max_iter=max_iter,
+        learning_rate=learning_rate,
+        max_depth=max_depth,
+        random_state=42,
+    )
