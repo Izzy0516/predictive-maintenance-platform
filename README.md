@@ -37,7 +37,7 @@ I trained four models and evaluated them on the untouched `test_FD001.txt` file 
 
 Gradient boosting's RMSE of 17.93 is close to the Saxena et al. (2008) benchmark of 18.4 on this dataset. I also ran 5-fold engine-grouped cross-validation on the training set to check that the numbers were stable, and they were (see `notebooks/02_baseline_model.ipynb`).
 
-One thing worth flagging: the rank ordering on the NASA score isn't the same as it was in cross-validation. Ridge won on NASA score during CV, because tree ensembles' tendency to average pulled their near-failure predictions toward the middle, which the NASA score punishes exponentially. On the held-out test set, most engines are still relatively healthy at their final recorded cycle, so gradient boosting comes out ahead on both metrics. Which model is "best" depends on what regime you're operating in. I go into this more in the [project guide](PROJECT_GUIDE.md).
+One thing worth flagging: the rank ordering on the NASA score isn't the same as it was in cross-validation. Ridge won on NASA score during CV, because tree ensembles' tendency to average pulled their near-failure predictions toward the middle, which the NASA score punishes exponentially. On the held-out test set, most engines are still relatively healthy at their final recorded cycle, so gradient boosting comes out ahead on both metrics. Which model is "best" depends on what regime you're operating in.
 
 ## Method: the decisions worth defending
 
