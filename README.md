@@ -18,6 +18,8 @@ I built a small machine learning system that predicts how many operational cycle
 
 My best model reaches an RMSE of 17.9 on the held-out `test_FD001` set, which sits inside the published benchmark range for this dataset.
 
+For the full reasoning behind every decision, with supporting evidence and worked examples, see [`PROJECT_GUIDE.md`](PROJECT_GUIDE.md).
+
 ## Why I chose this problem
 
 I'm studying Motorsport Engineering, and Remaining Useful Life prediction is exactly the kind of problem that sits behind component life management in real motorsport: gearbox change rules in F1, ERS component lifetimes, power unit life budgets. It's also the same problem industrial predictive maintenance solves at scale. The technical shape of the task, sensor time series turned into a regression problem, is a compact way to demonstrate the full ML engineering cycle: data cleaning, feature engineering, model selection, honest evaluation, serving, and testing.
@@ -37,7 +39,7 @@ I trained four models and evaluated them on the untouched `test_FD001.txt` file 
 
 Gradient boosting's RMSE of 17.93 is close to the Saxena et al. (2008) benchmark of 18.4 on this dataset. I also ran 5-fold engine-grouped cross-validation on the training set to check that the numbers were stable, and they were (see `notebooks/02_baseline_model.ipynb`).
 
-One thing worth flagging: the rank ordering on the NASA score isn't the same as it was in cross-validation. Ridge won on NASA score during CV, because tree ensembles' tendency to average pulled their near-failure predictions toward the middle, which the NASA score punishes exponentially. On the held-out test set, most engines are still relatively healthy at their final recorded cycle, so gradient boosting comes out ahead on both metrics. Which model is "best" depends on what regime you're operating in.
+One thing worth flagging: the rank ordering on the NASA score isn't the same as it was in cross-validation. Ridge won on NASA score during CV, because tree ensembles' tendency to average pulled their near-failure predictions toward the middle, which the NASA score punishes exponentially. On the held-out test set, most engines are still relatively healthy at their final recorded cycle, so gradient boosting comes out ahead on both metrics. Which model is "best" depends on what regime you're operating in. I go into this more in the [project guide](PROJECT_GUIDE.md).
 
 ## Method: the decisions worth defending
 
@@ -49,7 +51,7 @@ Three technical choices shape everything downstream. Each of them is enforced by
 
 **3. Two metrics, always reported together.** RMSE is symmetric, but late predictions aren't as forgivable as early ones in this domain. The NASA C-MAPSS scoring function penalises late predictions (predicted RUL greater than true RUL) exponentially with a denominator of 10, and early predictions with a denominator of 13. So a 30 cycle late error costs about 19.09 on the NASA scale, while a 30 cycle early error costs about 9.05. Late errors are roughly twice as expensive as early ones, which reflects the real world cost of missing an imminent failure. If I only reported RMSE, I'd be hiding the failure mode I care most about.
 
-The full reasoning behind each of these choices, with supporting numbers, is in [`PROJECT_GUIDE.md`](PROJECT_GUIDE.md).
+The full reasoning behind each of these choices, with supporting numbers, worked examples, and evidence tables, is in [`PROJECT_GUIDE.md`](PROJECT_GUIDE.md).
 
 ## The API
 
@@ -148,6 +150,10 @@ I want to be honest about scope, because a portfolio project is stronger when it
 * **No database.** The trained model lives in a file on disk. Adding Postgres to a stateless prediction service would be complexity without any real value.
 * **Not fine-tuned to state-of-the-art.** My goal was to hit the published FD001 benchmark range with defensible methodology, not to beat it. Beating the benchmark takes deep learning and months of tuning. Matching it, with clean engineering around it, demonstrates the skills I actually wanted to show.
 * **FD001 only.** FD002 through FD004 add multiple operating conditions and would need condition-normalisation preprocessing. That's real follow-up work, but it was out of scope for a single-dataset baseline.
+
+## Want more detail?
+
+The [project guide](PROJECT_GUIDE.md) is the longer companion to this README. It walks through every technical decision in more depth: how the labels are reconstructed, why the rolling window uses `min_periods=1`, how the two metrics interact on real data, why cross-validation and the held-out test set give different NASA rankings, and what I'd build next if I had more time.
 
 ## Reference
 
